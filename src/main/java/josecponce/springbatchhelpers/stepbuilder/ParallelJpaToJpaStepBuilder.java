@@ -44,6 +44,7 @@ public class ParallelJpaToJpaStepBuilder<In, Out> {
     @Wither private int concurrency = 1;
     @Wither private String orderBy = "";
     @Wither private Class<Out> outClass;
+    @Wither private Class<In> inClass;
 
     private final EntityManagerFactory entityManagerFactory;
     private final PlatformTransactionManager transactionManager;
@@ -64,8 +65,11 @@ public class ParallelJpaToJpaStepBuilder<In, Out> {
 
     @SuppressWarnings("unchecked")
     public Step build() {
-        Class[] types = outClass != null ? new Class[] {null, outClass} :
+        Class[] types = processor == null ? new Class[] {null, null} :
                 GenericTypeResolver.resolveTypeArguments(processor.getClass(), ItemProcessor.class);
+        types[0] = inClass != null ? inClass : types[0];
+        types[1] = outClass != null ? outClass : types[1];
+
         if (types == null) {
             throw new RuntimeException("The processor needs to be set as an anonymous inner class.");
         }

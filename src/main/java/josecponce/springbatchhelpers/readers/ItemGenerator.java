@@ -1,7 +1,6 @@
 package josecponce.springbatchhelpers.readers;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
@@ -10,7 +9,7 @@ import org.springframework.batch.item.UnexpectedInputException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
-@AllArgsConstructor
+@Builder
 public class ItemGenerator<T> implements ItemReader<T> {
     private Function<Long, T> generator;
     private Long max;

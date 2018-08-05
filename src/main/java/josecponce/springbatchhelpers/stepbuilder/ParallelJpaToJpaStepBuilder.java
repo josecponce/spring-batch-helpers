@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.LockAcquisitionException;
-import org.springframework.batch.core.ItemProcessListener;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.batch.item.ItemProcessor;
@@ -16,11 +16,11 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.StringUtils;
 
@@ -65,8 +65,9 @@ public class ParallelJpaToJpaStepBuilder<In, Out> {
 
     @SuppressWarnings("unchecked")
     public Step build() {
-        Class[] types = processor == null ? new Class[] {null, null} :
-                GenericTypeResolver.resolveTypeArguments(processor.getClass(), ItemProcessor.class);
+        Class[] types = processor == null || GenericTypeResolver.resolveTypeArguments(processor.getClass(), ItemProcessor.class) == null
+                ? new Class[] {null, null}
+                : GenericTypeResolver.resolveTypeArguments(processor.getClass(), ItemProcessor.class);
         types[0] = inClass != null ? inClass : types[0];
         types[1] = outClass != null ? outClass : types[1];
 

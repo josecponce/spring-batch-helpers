@@ -2,6 +2,8 @@ package josecponce.springbatchhelpers;
 
 import josecponce.springbatchhelpers.readers.ItemGenerator;
 import josecponce.springbatchhelpers.stepbuilder.ParallelJpaToJpaStepBuilder;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.scope.StepScope;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,6 +19,12 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 @ComponentScan(basePackageClasses = {ItemGenerator.class, ParallelJpaToJpaStepBuilder.class})
 public class SpringBatchHelpersAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public JobParametersBuilder jobParametersBuilder(JobExplorer jobExplorer) {
+        return new JobParametersBuilder(jobExplorer);
+    }
 
     @Bean
     @ConditionalOnMissingBean
